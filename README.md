@@ -1,5 +1,7 @@
 # ORVA Premium
 
+**Site no ar:** https://orva-premium.vercel.app
+
 Site de uma joalheria fictícia de anéis de prata, construído para estudar **coreografia de rolagem**: seções que ficam paradas na tela enquanto a cena muda, em vez de a página simplesmente descer.
 
 A dinâmica foi inspirada no site de joias OYLA. Marca, textos, produtos e visuais são originais e fictícios: no lugar de fotos e vídeos, os anéis e a água são gerados por código em 3D (Three.js).
