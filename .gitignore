@@ -1,0 +1,12 @@
+# dependências e builds locais
+node_modules/
+.vercel/
+
+# ferramentas locais (a skill da equipe fica fora do repositório)
+.claude/
+prints/
+
+# sistema
+Thumbs.db
+Desktop.ini
+.DS_Store

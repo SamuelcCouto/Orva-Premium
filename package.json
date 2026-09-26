@@ -1,0 +1,8 @@
+{
+  "name": "orva-replica",
+  "private": true,
+  "description": "Réplica de estudo da dinâmica de rolagem do site OYLA (GSAP + ScrollTrigger + Lenis + Three.js)",
+  "scripts": {
+    "dev": "npx --yes serve -l 5173 ."
+  }
+}

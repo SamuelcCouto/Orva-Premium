@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ORVA — Anéis de prata feitos à mão</title>
+  <meta name="description" content="Anéis de prata oxidada feitos à mão, uma peça por vez, no ateliê ORVA em Ouro Preto.">
+  <meta name="theme-color" content="#FBFBF9">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="ORVA — Anéis de prata feitos à mão">
+  <meta property="og:description" content="Estudo de coreografia de rolagem: joalheria fictícia com anéis em 3D, trilha horizontal e revelação em tela cheia.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%237B1426' fill-rule='evenodd' d='M24 3a21 21 0 1 0 0 42a21 21 0 1 0 0-42ZM25.6 7a17 17 0 1 1 0 34a17 17 0 1 1 0-34Z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500&family=Instrument+Serif&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add('js');</script>
+
+  <!-- Three.js via import map (usado pelos módulos em js/) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+  <!-- GSAP + ScrollTrigger (animações ligadas à rolagem) e Lenis (rolagem suave) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#colecao">Pular para a coleção</a>
+  <p class="sr-only" aria-live="polite" data-announcer></p>
+
+  <!-- ============ CABEÇALHO FIXO ============ -->
+  <header class="site-header" data-header>
+    <a class="logo" href="#topo" aria-label="ORVA, voltar ao início" data-scroll-to="top">
+      <svg class="logo__o" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill-rule="evenodd" d="M24 3a21 21 0 1 0 0 42a21 21 0 1 0 0-42ZM25.6 7a17 17 0 1 1 0 34a17 17 0 1 1 0-34Z"/>
+      </svg>
+      <span class="logo__word" aria-hidden="true">RVA</span>
+    </a>
+    <a class="site-header__about label" href="#atelie" data-scroll-to="#atelie">Sobre</a>
+    <div class="site-header__actions">
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu" data-menu-toggle>
+        <span></span><span></span>
+      </button>
+      <button class="bag-toggle label" type="button" aria-controls="bag" aria-expanded="false" data-bag-open>
+        [ Sacola<span class="bag-toggle__count" data-bag-count hidden></span> ]
+      </button>
+    </div>
+  </header>
+
+  <main id="topo">
+    <!-- ============ 1. HERO: mídia + título que se desfaz na rolagem ============ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__media" data-hero-media>
+        <canvas class="hero__canvas" aria-hidden="true"></canvas>
+        <!-- Para usar um vídeo real, preencha data-src (ex.: assets/hero.mp4) e, se quiser, data-src-mobile -->
+        <video class="hero__video" data-src="" muted loop playsinline aria-hidden="true"></video>
+      </div>
+      <div class="hero__content">
+        <h1 class="hero__title" id="hero-title" data-split>
+          <span class="sr-only">Pureza medida</span>
+          <span class="line">Pureza</span>
+          <span class="line">medida</span>
+        </h1>
+        <div class="hero__cta-wrap">
+          <button class="pill hero__cta" type="button" data-scroll-to="#colecao">
+            <span class="label">Descobrir</span><span class="pill__plus" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. COLEÇÃO: rolagem horizontal fixada + 3. revelação ============ -->
+    <section class="collection" id="colecao" aria-labelledby="colecao-title">
+      <h2 class="sr-only" id="colecao-title">Coleção</h2>
+      <div class="collection__track" data-track>
+        <article class="product" data-id="coracao-rubi" data-name="Coração Rubi" data-price="2480" data-ring="heart">
+          <div class="product__media"><img alt="Anel de prata com pedra vermelha lapidada em forma de coração" width="480" height="640"></div>
+          <h3 class="product__name">Coração Rubi</h3>
+          <p class="product__price">R$ 2.480</p>
+          <button class="product__add label" type="button" data-add>Adicionar à sacola</button>
+        </article>
+        <article class="product" data-id="olho-dagua" data-name="Olho d'Água" data-price="2960" data-ring="eye">
+          <div class="product__media"><img alt="Anel de prata com olho azul em esmalte vitrificado" width="480" height="640"></div>
+          <h3 class="product__name">Olho d'Água</h3>
+          <p class="product__price">R$ 2.960</p>
+          <button class="product__add label" type="button" data-add>Adicionar à sacola</button>
+        </article>
+        <article class="product" data-id="sinete-constelacao" data-name="Sinete Constelação" data-price="3420" data-ring="pave">
+          <div class="product__media"><img alt="Anel sinete de prata cravejado de pequenas pedras claras" width="480" height="640"></div>
+          <h3 class="product__name">Sinete Constelação</h3>
+          <p class="product__price">R$ 3.420</p>
+          <button class="product__add label" type="button" data-add>Adicionar à sacola</button>
+        </article>
+        <article class="product" data-id="triade" data-name="Tríade" data-price="3740" data-ring="triple">
+          <div class="product__media"><img alt="Três aros finos de prata unidos em um só anel" width="480" height="640"></div>
+          <h3 class="product__name">Tríade</h3>
+          <p class="product__price">R$ 3.740</p>
+          <button class="product__add label" type="button" data-add>Adicionar à sacola</button>
+        </article>
+        <article class="product" data-id="eclipse" data-name="Eclipse" data-price="4180" data-ring="onyx">
+          <div class="product__media"><img alt="Anel de prata com ônix negro em corte hexagonal" width="480" height="640"></div>
+          <h3 class="product__name">Eclipse</h3>
+          <p class="product__price">R$ 4.180</p>
+          <button class="product__add label" type="button" data-add>Adicionar à sacola</button>
+        </article>
+        <article class="product" data-id="lua-fosca" data-name="Lua Fosca" data-price="4950" data-ring="moon">
+          <div class="product__media"><img alt="Anel de prata com pedra-da-lua leitosa em cabochão" width="480" height="640"></div>
+          <h3 class="product__name">Lua Fosca</h3>
+          <p class="product__price">R$ 4.950</p>
+          <button class="product__add label" type="button" data-add>Adicionar à sacola</button>
+        </article>
+      </div>
+
+      <!-- Painel que "abre" do centro para as bordas (clip-path) -->
+      <div class="reveal" data-reveal>
+        <div class="reveal__media" data-reveal-media>
+          <canvas class="reveal__canvas" aria-hidden="true"></canvas>
+          <!-- Para usar um vídeo real, preencha data-src (ex.: assets/agua.mp4) e, se quiser, data-src-mobile -->
+          <video class="reveal__video" data-src="" muted loop playsinline aria-hidden="true"></video>
+        </div>
+        <div class="reveal__caption">
+          <p class="reveal__name">Olho d'Água</p>
+          <p class="reveal__meta">Prata 925 e esmalte vitrificado</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. ATELIÊ: coluna esquerda sticky, números à direita ============ -->
+    <section class="atelier" id="atelie" aria-labelledby="atelie-title">
+      <div class="atelier__intro">
+        <h2 class="atelier__title" id="atelie-title">Feito sem concessões</h2>
+        <div class="atelier__body">
+          <p>Cada anel é forjado por um único par de mãos. Não existe linha de montagem: primeiro escolhemos o metal, e a forma segue a natureza dele.</p>
+          <p>Trabalhamos com prata oxidada, bronze escurecido e latão cru. O peso é intencional. As arestas ficam onde caem; nada é suavizado só por conforto.</p>
+          <p>A ORVA existe para quem usa joia como afirmação, não como enfeite. Uma peça por vez, feita para durar uma vida.</p>
+        </div>
+        <button class="pill atelier__cta" type="button" data-scroll-to="#colecao">
+          <span class="label">Ver coleção</span><span class="pill__plus" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="atelier__stats">
+        <div class="stat">
+          <p class="stat__figure"><span data-count="100">100</span>%<br>Feito à mão</p>
+          <p class="stat__note">Cada anel é feito por uma só artesã, do começo ao fim.</p>
+        </div>
+        <div class="stat">
+          <p class="stat__figure"><span data-count="14">14</span>–<span data-count="92">92</span> g<br>Por peça</p>
+          <p class="stat__note">Peso deliberado: você sente cada anel no dedo.</p>
+        </div>
+        <div class="stat">
+          <p class="stat__figure">Prata<br>de lei 925</p>
+          <p class="stat__note">Só metais oxidados. Sem banho, sem atalhos.</p>
+        </div>
+        <div class="stat">
+          <p class="stat__figure">Garantia<br>vitalícia</p>
+          <p class="stat__note">Respondemos por cada peça que fazemos, para sempre.</p>
+          <p class="stat__meta">Ateliê ORVA, desde 2019</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 5. RODAPÉ ============ -->
+  <footer class="site-footer" id="rodape">
+    <div class="site-footer__col">
+      <a class="site-footer__head" href="#">Entrar</a>
+      <p>Feito em pequenos lotes<br>Ateliê ORVA</p>
+      <p>Ouro Preto, MG<br>© ORVA 2026<br>Todas as peças são desenhos originais.</p>
+    </div>
+    <div class="site-footer__col">
+      <a class="site-footer__head" href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+      <ul class="site-footer__links">
+        <li><a href="#">Trocas e devoluções</a></li>
+        <li><a href="#">Privacidade</a></li>
+        <li><a href="#">Termos de uso</a></li>
+      </ul>
+    </div>
+    <div class="site-footer__col site-footer__col--wide">
+      <h2 class="site-footer__head">Newsletter</h2>
+      <p>Entre na lista e saiba primeiro dos novos lançamentos. 10% de desconto na primeira compra.</p>
+      <form class="newsletter" novalidate data-newsletter>
+        <label class="sr-only" for="nl-email">Seu e-mail</label>
+        <input class="newsletter__input" id="nl-email" name="email" type="email" autocomplete="email" placeholder="Seu e-mail" aria-describedby="nl-msg">
+        <button class="newsletter__submit" type="submit">
+          <span class="label">Assinar</span><span class="pill__plus" aria-hidden="true"></span>
+        </button>
+      </form>
+      <p class="newsletter__msg" id="nl-msg" data-newsletter-msg></p>
+    </div>
+  </footer>
+
+  <!-- ============ MENU EM TELA CHEIA ============ -->
+  <div class="menu" id="menu" inert data-menu>
+    <nav class="menu__nav" aria-label="Menu principal">
+      <a class="menu__link" href="#colecao" data-scroll-to="#colecao"><span>Coleção</span></a>
+      <a class="menu__link" href="#atelie" data-scroll-to="#atelie"><span>Ateliê</span></a>
+      <a class="menu__link" href="#rodape" data-scroll-to="#rodape"><span>Newsletter</span></a>
+    </nav>
+    <div class="menu__foot">
+      <p>Ateliê ORVA, Ouro Preto</p>
+      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+
+  <!-- ============ SACOLA (gaveta lateral) ============ -->
+  <div class="bag" id="bag" inert data-bag>
+    <div class="bag__scrim" data-bag-close></div>
+    <div class="bag__panel" role="dialog" aria-modal="true" aria-labelledby="bag-title">
+      <div class="bag__head">
+        <h2 class="bag__title" id="bag-title">Sacola</h2>
+        <button class="label bag__close" type="button" data-bag-close>Fechar</button>
+      </div>
+      <ul class="bag__list" data-bag-list></ul>
+      <p class="bag__empty" data-bag-empty>Sua sacola está vazia. Escolha um anel na coleção para começar.</p>
+      <div class="bag__foot">
+        <div class="bag__total"><span>Subtotal</span><span data-bag-total>R$ 0</span></div>
+        <button class="pill pill--dark" type="button" data-bag-close data-scroll-to="#colecao">
+          <span class="label">Continuar na coleção</span><span class="pill__plus" aria-hidden="true"></span>
+        </button>
+        <p class="bag__note">Loja de demonstração: nenhum pagamento é processado.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
