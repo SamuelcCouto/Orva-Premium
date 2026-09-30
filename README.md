@@ -47,6 +47,10 @@ gsap.timeline({
 - As cenas fora da primeira tela (fotos dos produtos, água, provador) só nascem quando a seção chega a uma tela de distância.
 - As fotos dos anéis são geradas em WebP.
 - As fontes carregam sem bloquear a primeira pintura.
+- O Three.js só é importado depois da primeira pintura com conteúdo (`PerformanceObserver`).
+- Sem preload de fonte do Google Fonts: o arquivo varia por navegador e o preload errado deixava a página em branco por ~2 s.
+
+Lighthouse no celular, mediana de 3 rodadas, antes → depois (30/09/2026): desempenho 59 → 69, FCP 2,0 → 1,7 s, LCP 3,1 → 3,0 s, TBT 7,3 → 1,2 s, Speed Index 5,0 → 3,4 s. Acessibilidade, boas práticas e SEO seguem em 100.
 
 ## Documentos de estudo
 
