@@ -559,7 +559,14 @@ if (provadorEl) {
   });
 }
 
-import('./rings.js')
+// O 3D só começa depois da primeira pintura. Com os arquivos em cache, o
+// Three.js chegava tão rápido que era interpretado antes de o navegador pintar
+// o cabeçalho, e a primeira pintura (FCP) ficava ~0,9 s atrás do DOM pronto.
+// Dois quadros garantem que a página já pintou.
+const depoisDaPrimeiraPintura = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+depoisDaPrimeiraPintura()
+  .then(() => import('./rings.js'))
   .then(async ({ createHeroScene, renderProductShots }) => {
     if (!(await mountVideo($('.hero__video')))) {
       createHeroScene($('.hero__canvas'), { state: heroState, reduced: reduceMotion });
