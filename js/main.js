@@ -559,11 +559,18 @@ if (provadorEl) {
   });
 }
 
-// O 3D só começa depois da primeira pintura. Com os arquivos em cache, o
-// Three.js chegava tão rápido que era interpretado antes de o navegador pintar
-// o cabeçalho, e a primeira pintura (FCP) ficava ~0,9 s atrás do DOM pronto.
-// Dois quadros garantem que a página já pintou.
-const depoisDaPrimeiraPintura = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+// O 3D só começa depois da primeira pintura com conteúdo (FCP). Com os arquivos
+// em cache, o Three.js era interpretado enquanto o texto ainda esperava a fonte
+// (o navegador esconde o texto ~100 ms), e a tela travava ~2 s sem nada pintado.
+// A API de desempenho avisa quando a pintura acontece; o limite de 2 s é reserva.
+const depoisDaPrimeiraPintura = () => new Promise((resolve) => {
+  if (performance.getEntriesByName('first-contentful-paint').length) { resolve(); return; }
+  setTimeout(resolve, 2000);
+  try {
+    const observador = new PerformanceObserver(() => { observador.disconnect(); resolve(); });
+    observador.observe({ type: 'paint', buffered: true });
+  } catch { resolve(); }
+}).then(() => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0))));
 
 depoisDaPrimeiraPintura()
   .then(() => import('./rings.js'))
@@ -573,6 +580,8 @@ depoisDaPrimeiraPintura()
     }
 
     // "fotografa" os anéis só quando a coleção se aproxima e o navegador está livre
+    // margem curta: a coleção fica a ~1,8 tela do topo (hero + pin); com margem de
+    // uma tela inteira, as fotos e a água nasciam já no carregamento
     quandoPerto(collection, () => whenIdle(async () => {
       productShots = await renderProductShots([...new Set(products.map((p) => p.dataset.ring))]);
       products.forEach((product) => {
@@ -581,14 +590,14 @@ depoisDaPrimeiraPintura()
         img.src = productShots[product.dataset.ring];
       });
       renderBag();
-    }));
+    }), '25% 0px');
 
     quandoPerto(collection, async () => {
       if (!(await mountVideo($('.reveal__video')))) {
         const { createWaterScene } = await import('./water.js');
         createWaterScene($('.reveal__canvas'), { state: waterState, reduced: reduceMotion });
       }
-    }, '50% 0px');
+    }, '15% 0px');
 
     quandoPerto(provadorEl, async () => {
       const { createProvador } = await import('./provador.js');
