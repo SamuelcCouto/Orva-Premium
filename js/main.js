@@ -110,12 +110,12 @@ function playIntro() {
     .fromTo(charsIn,
       { yPercent: 70, opacity: 0, filter: 'blur(14px)' },
       { yPercent: 0, opacity: 1, filter: 'blur(0px)', duration: 1.5, stagger: 0.045 }, 0.25)
-    .fromTo('.site-header > *', { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 1, stagger: 0.08 }, 0.5)
     .fromTo('.hero__cta', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 1 }, 0.9);
 }
 
-// espera as fontes (no máximo 1,2s) para a entrada não "pular" de fonte
-Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]).then(() => {
+// espera as fontes por no máximo 400 ms: a fonte do título vem pré-carregada, e
+// esperar mais atrasava o maior elemento da tela (LCP), que é o próprio título
+Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 400))]).then(() => {
   playIntro();
   ScrollTrigger.refresh();
 });

@@ -237,8 +237,9 @@ ul { list-style: none; margin: 0; padding: 0; }
 
 /* Esconde o hero até a animação de entrada começar.
    Se o JS falhar, a animação "failsafe" mostra tudo depois de 4s. */
-.js .hero__content,
-.js .site-header { opacity: 0; animation: failsafe 0s 4s forwards; }
+/* Só o título fica oculto até a entrada: o cabeçalho pinta logo, e a primeira
+   pintura (FCP) não espera a animação. */
+.js .hero__content { opacity: 0; animation: failsafe 0s 4s forwards; }
 @keyframes failsafe { to { opacity: 1; } }
 
 /* =========================================================
