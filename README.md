@@ -20,6 +20,7 @@ A dinâmica foi inspirada no site de joias OYLA. Marca, textos, produtos e visua
 | Coluna esquerda parada enquanto a direita rola | `position: sticky` | `css/style.css`, seção 4 |
 | Cabeçalho de vidro fosco | Classe `is-solid` com `backdrop-filter` ao sair do hero | `js/main.js` + `css/style.css` |
 | Anéis e água em 3D | Three.js com iluminação de estúdio; água com cáusticas em shader | `js/rings.js`, `js/water.js` |
+| Provador em arco | Os 6 anéis num carrossel 3D; o escolhido vem à frente, os outros recuam na névoa; setas, teclado e arrastar | `js/provador.js` |
 
 Também tem menu em tela cheia, sacola lateral, contadores, newsletter com validação e um modo sem animação para quem ativa "reduzir movimento" no sistema. Sacola e newsletter são demonstrações: nada é vendido nem registrado.
 
@@ -39,6 +40,19 @@ gsap.timeline({
   .fromTo(painel, { clipPath: 'inset(0% 50% 0% 50%)' },   // 2º: abre do centro
                   { clipPath: 'inset(0% 0% 0% 0%)' });
 ```
+
+## Desempenho
+
+- Os shaders do 3D compilam em paralelo (`renderer.compileAsync`) antes do primeiro quadro, sem congelar a página.
+- As cenas fora da primeira tela (fotos dos produtos, água, provador) só nascem quando a seção chega a uma tela de distância.
+- As fotos dos anéis são geradas em WebP.
+- As fontes carregam sem bloquear a primeira pintura.
+
+## Documentos de estudo
+
+- `docs/brief-visual.md`: paleta, tokens, contraste medido e proibições (skill `direcao-visual`).
+- `docs/auditoria-visual.md`: auditoria anti-clichê, com nota e trocas feitas.
+- `docs/prompts-mockup.md`: prompts para o próximo estudo pelo método imagem → código.
 
 ## Como rodar
 

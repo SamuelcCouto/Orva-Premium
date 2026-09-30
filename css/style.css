@@ -542,3 +542,149 @@ ul { list-style: none; margin: 0; padding: 0; }
 .is-reduced .product { scroll-snap-align: start; }
 .is-reduced .reveal { position: relative; height: 88svh; clip-path: none; }
 .is-reduced .product__add { opacity: 1; transform: none; }
+
+/* =========================================================
+   Legenda da revelação: véu claro atrás do texto.
+   O fundo de água tem cáusticas quase brancas; o véu garante o
+   contraste nos picos de luz sem virar uma caixa.
+   ========================================================= */
+.reveal__caption::before {
+  content: "";
+  position: absolute;
+  inset: -40px -120px -40px -60px;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgb(237 241 243 / .82), rgb(237 241 243 / 0));
+}
+
+/* =========================================================
+   3b. PROVADOR (coleção em arco em 3D)
+   ========================================================= */
+.provador {
+  --provador-tom: var(--paper);
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--provador-tom);
+  border-top: 1px solid var(--rule);
+  transition: background-color 1.2s var(--ease-out);
+}
+.provador__palco {
+  position: relative;
+  overflow: hidden;
+  min-height: 60svh;
+}
+.provador__fundo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 11vw, 11rem);
+  line-height: .9;
+  white-space: nowrap;
+  color: var(--ink);
+  opacity: .07;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity .5s;
+}
+.provador__fundo.is-trocando { opacity: 0; }
+.provador__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.provador__canvas:active { cursor: grabbing; }
+
+.provador__painel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: calc(var(--header-h) + 28px) var(--gutter) 40px;
+  border-left: 1px solid var(--rule);
+}
+.provador__titulo {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 2.5vw, 2.4rem);
+  line-height: 1.05;
+}
+.provador__dica { max-width: 34ch; font-size: 14px; color: var(--muted); }
+.provador__posicao { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.provador__nome {
+  margin: 6px 0 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 3.6vw, 3.4rem);
+  line-height: 1;
+}
+.provador__detalhe { max-width: 34ch; font-size: 15px; }
+.provador__preco { margin-top: 12px; font-size: 15px; font-variant-numeric: tabular-nums; }
+.provador__acoes { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.provador__seta {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  transition: background-color .3s, color .3s;
+}
+.provador__seta svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.provador__seta:hover { background: var(--ink); color: var(--paper); }
+.provador__add { margin-left: auto; }
+
+@media (max-width: 760px) {
+  .provador { grid-template-columns: 1fr; }
+  .provador__palco { min-height: 58svh; }
+  .provador__painel { border-left: 0; border-top: 1px solid var(--rule); padding-top: 28px; }
+  .provador__add { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .provador, .provador__fundo { transition: none; }
+}
+
+/* ---------- aviso de marca fictícia no rodapé ---------- */
+.site-footer__ficcao {
+  grid-column: 1 / -1;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   Página legal (privacidade.html)
+   ========================================================= */
+.legal { background: var(--paper); }
+.legal__main {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: 56px var(--gutter) 96px;
+}
+.legal__voltar { display: inline-block; margin-bottom: 40px; color: var(--garnet); }
+.legal__titulo {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1;
+}
+.legal__lead { font-size: 18px; line-height: 1.55; margin-bottom: 40px; }
+.legal section { padding-top: 28px; border-top: 1px solid var(--rule); margin-bottom: 36px; scroll-margin-top: 24px; }
+.legal h2 { margin: 0 0 14px; font-family: var(--font-display); font-weight: 400; font-size: 28px; }
+.legal p { max-width: 64ch; line-height: 1.6; }
+.legal p + p { margin-top: 12px; }
+.legal a { color: var(--garnet); text-decoration: underline; text-underline-offset: 3px; }
+.legal__data { font-size: 13px; color: var(--muted); }
+
+.reveal__caption { isolation: isolate; } /* o véu (::before, z-index -1) fica atrás do texto e à frente da água */

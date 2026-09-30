@@ -5,7 +5,7 @@
    state.open (0→1) vem do clip-path; só renderiza quando o painel está aberto.
    ========================================================= */
 import * as THREE from 'three';
-import { createRing, setupRenderer, studioEnvironment } from './rings.js';
+import { compilarSemTravar, createRing, setupRenderer, studioEnvironment } from './rings.js';
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -139,7 +139,8 @@ export function createWaterScene(canvas, { state, reduced = false }) {
 
   const clock = new THREE.Clock();
   let lastOpen = -1;
-  renderer.setAnimationLoop(() => {
+  Promise.all([compilarSemTravar(renderer, bgScene, bgCamera), compilarSemTravar(renderer, scene, camera)])
+    .then(() => running && renderer.setAnimationLoop(() => {
     if (!running || !visible || state.open <= 0.001) return;
     if (reduced && !dirty && lastOpen === state.open) return;
     lastOpen = state.open;
@@ -154,7 +155,7 @@ export function createWaterScene(canvas, { state, reduced = false }) {
     renderer.render(bgScene, bgCamera);
     renderer.clearDepth();
     renderer.render(scene, camera);
-  });
+  }));
 
   return {
     stop() { running = false; renderer.setAnimationLoop(null); },

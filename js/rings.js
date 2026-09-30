@@ -31,6 +31,13 @@ export function studioEnvironment(renderer) {
   return env;
 }
 
+// Compila os shaders em paralelo (KHR_parallel_shader_compile) antes do primeiro
+// quadro. Sem isso, o primeiro render compila tudo de uma vez e congela a página
+// por segundos no celular: era a maior parte do tempo de bloqueio no Lighthouse.
+export function compilarSemTravar(renderer, scene, camera) {
+  return renderer.compileAsync ? renderer.compileAsync(scene, camera).catch(() => {}) : Promise.resolve();
+}
+
 /* ---------- materiais ---------- */
 const materials = {
   silver: () => new THREE.MeshPhysicalMaterial({ color: 0xd9dce0, metalness: 1, roughness: 0.16 }),
@@ -293,7 +300,7 @@ export function createHeroScene(canvas, { state, reduced = false }) {
   const clock = new THREE.Clock();
   let last = { intro: -1, scroll: -1 };
 
-  renderer.setAnimationLoop(() => {
+  compilarSemTravar(renderer, scene, camera).then(() => running && renderer.setAnimationLoop(() => {
     if (!visible || !running) return;
     const t = reduced ? 0 : clock.getElapsedTime();
     // em movimento reduzido só redesenha quando algo mudou
@@ -317,7 +324,7 @@ export function createHeroScene(canvas, { state, reduced = false }) {
     });
 
     renderer.render(scene, camera);
-  });
+  }));
 
   return {
     stop() { running = false; renderer.setAnimationLoop(null); },
@@ -326,9 +333,11 @@ export function createHeroScene(canvas, { state, reduced = false }) {
 
 /* =========================================================
    FOTOS DE PRODUTO
-   Um renderer temporário "fotografa" cada anel em PNG (fundo transparente).
+   Um renderer temporário "fotografa" cada anel em WebP com fundo transparente
+   (o PNG pesava 640 KB a mais). Navegadores sem codificador de WebP, como o
+   Safari, devolvem PNG sozinhos.
    ========================================================= */
-export function renderProductShots(types, { width = 480, height = 640 } = {}) {
+export async function renderProductShots(types, { width = 480, height = 640 } = {}) {
   const renderer = setupRenderer(undefined, { preserve: true });
   renderer.setPixelRatio(1);
   renderer.setSize(width, height, false);
@@ -344,16 +353,17 @@ export function renderProductShots(types, { width = 480, height = 640 } = {}) {
   camera.lookAt(0, 0.2, 0);
 
   const shots = {};
-  types.forEach((type) => {
+  for (const type of types) {
     const ring = createRing(type);
     ring.rotation.set(0.32, 0.95, 0);
     ring.position.y = -0.1;
     scene.add(ring);
+    await compilarSemTravar(renderer, scene, camera);
     renderer.render(scene, camera);
-    shots[type] = renderer.domElement.toDataURL('image/png');
+    shots[type] = renderer.domElement.toDataURL('image/webp', 0.9);
     scene.remove(ring);
     disposeObject(ring);
-  });
+  }
 
   scene.environment.dispose();
   renderer.dispose();

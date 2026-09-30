@@ -491,27 +491,103 @@ function mountVideo(video) {
 
 const whenIdle = (fn) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 2500 }) : setTimeout(fn, 1200));
 
+// Roda uma vez quando o elemento chega a uma tela de distância. O 3D fora da
+// primeira dobra deixa de pesar no carregamento (antes, tudo nascia de uma vez).
+function quandoPerto(el, fn, margem = '100% 0px') {
+  if (!el) return;
+  const observador = new IntersectionObserver((entradas) => {
+    if (!entradas.some((e) => e.isIntersecting)) return;
+    observador.disconnect();
+    fn();
+  }, { rootMargin: margem });
+  observador.observe(el);
+}
+
+/* ---------------------------------------------------------
+   PROVADOR (coleção em arco): texto e controles.
+   A cena 3D (js/provador.js) só gira o carrossel; o resto é HTML.
+   --------------------------------------------------------- */
+const provadorEl = $('[data-provador]');
+const pecas = products.map((p) => ({ id: p.dataset.id, nome: p.dataset.name, preco: Number(p.dataset.price), tipo: p.dataset.ring }));
+const DETALHES = {
+  heart: 'Rubi sintético lapidado em coração, cravado num engaste de prata 925.',
+  eye: 'Esmalte vitrificado em três camadas sobre prata polida.',
+  pave: 'Sinete cravejado de pequenas pedras claras, assentadas uma a uma.',
+  triple: 'Três aros finos de prata, soldados lado a lado.',
+  onyx: 'Ônix negro em corte hexagonal, polido até espelhar.',
+  moon: 'Pedra-da-lua em cabochão, com reflexo azulado sob luz fria.',
+};
+// um tom baixo da pedra, misturado ao papel: a cor vem do assunto, não de um degradê
+const TONS = { heart: '#F7EFEF', eye: '#EEF2F7', pave: '#F4F4F2', triple: '#F3F3F1', onyx: '#ECECEB', moon: '#F0F2F6' };
+let provador = null;
+let pecaAtual = 0;
+
+function mostrarPeca(indice) {
+  const total = pecas.length;
+  pecaAtual = ((indice % total) + total) % total;
+  const peca = pecas[pecaAtual];
+  $('[data-provador-posicao]').textContent = `${pecaAtual + 1} de ${total}`;
+  $('[data-provador-nome]').textContent = peca.nome;
+  $('[data-provador-detalhe]').textContent = DETALHES[peca.tipo];
+  $('[data-provador-preco]').textContent = brl.format(peca.preco);
+  provadorEl.style.setProperty('--provador-tom', TONS[peca.tipo]);
+  const fundo = $('[data-provador-fundo]');
+  fundo.classList.add('is-trocando');
+  setTimeout(() => { fundo.textContent = peca.nome; fundo.classList.remove('is-trocando'); }, reduceMotion ? 0 : 450);
+  provador?.irPara(pecaAtual);
+}
+
+if (provadorEl) {
+  $('[data-provador-anterior]').addEventListener('click', () => mostrarPeca(pecaAtual - 1));
+  $('[data-provador-proximo]').addEventListener('click', () => mostrarPeca(pecaAtual + 1));
+  provadorEl.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, textarea')) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); mostrarPeca(pecaAtual - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); mostrarPeca(pecaAtual + 1); }
+  });
+  // O canvas recebe foco para as setas do teclado funcionarem sem precisar achar os botões.
+  $('.provador__canvas').tabIndex = 0;
+
+  const botaoAdicionar = $('[data-provador-adicionar]');
+  botaoAdicionar.addEventListener('click', () => {
+    const produto = products.find((p) => p.dataset.ring === pecas[pecaAtual].tipo);
+    $('[data-add]', produto).click(); // reaproveita a sacola da coleção
+    const rotulo = $('.label', botaoAdicionar);
+    rotulo.textContent = 'Adicionado';
+    clearTimeout(botaoAdicionar.resetTimer);
+    botaoAdicionar.resetTimer = setTimeout(() => { rotulo.textContent = 'Adicionar à sacola'; }, 1600);
+  });
+}
+
 import('./rings.js')
   .then(async ({ createHeroScene, renderProductShots }) => {
     if (!(await mountVideo($('.hero__video')))) {
       createHeroScene($('.hero__canvas'), { state: heroState, reduced: reduceMotion });
     }
 
-    // "fotografa" os anéis quando o navegador estiver livre (depois da entrada)
-    whenIdle(() => {
-      productShots = renderProductShots([...new Set(products.map((p) => p.dataset.ring))]);
+    // "fotografa" os anéis só quando a coleção se aproxima e o navegador está livre
+    quandoPerto(collection, () => whenIdle(async () => {
+      productShots = await renderProductShots([...new Set(products.map((p) => p.dataset.ring))]);
       products.forEach((product) => {
         const img = $('img', product);
         img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
         img.src = productShots[product.dataset.ring];
       });
       renderBag();
-    });
+    }));
 
-    if (!(await mountVideo($('.reveal__video')))) {
-      const { createWaterScene } = await import('./water.js');
-      createWaterScene($('.reveal__canvas'), { state: waterState, reduced: reduceMotion });
-    }
+    quandoPerto(collection, async () => {
+      if (!(await mountVideo($('.reveal__video')))) {
+        const { createWaterScene } = await import('./water.js');
+        createWaterScene($('.reveal__canvas'), { state: waterState, reduced: reduceMotion });
+      }
+    }, '50% 0px');
+
+    quandoPerto(provadorEl, async () => {
+      const { createProvador } = await import('./provador.js');
+      provador = createProvador($('.provador__canvas'), { tipos: pecas.map((p) => p.tipo), reduced: reduceMotion });
+      provador.irPara(pecaAtual);
+    });
   })
   .catch((error) => {
     // sem 3D (ex.: CDN fora do ar) a página continua funcionando
